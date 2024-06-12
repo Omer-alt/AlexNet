@@ -6,7 +6,7 @@ Network architecture of AlexNet.
 In this experiment, we aimed to implement and evaluate the AlexNet architecture on the ImageNet dataset, focusing on various aspects such as data preprocessing, augmentation, and model performance.
 
 ### 1. Data Loading
-The data set we have is adequate for the object localization problem, but the aim of our experiment is classification.ss
+The data set we have is adequate for the object localization problem, but the aim of our experiment is classification.
  ImageNet 2012 is available on kaggle and can be used directly: [ImageNet Object Localization Challenge 2012 on Kaggle](https://www.kaggle.com/competitions/imagenet-object-localization-challenge/data)
 
 ### 2. Data Preprocessing
