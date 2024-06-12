@@ -5,13 +5,10 @@ import torchvision as tv
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import torchvision.transforms as transforms
-from torch.utils.data import Dataset, DataLoader
 
-from PIL import Image
+
 import numpy as np
 import matplotlib.pyplot as plt
-from tqdm import tqdm
 from glob import glob
 from shutil import move
 import xml.etree.ElementTree as ET
@@ -28,8 +25,6 @@ load_dotenv()
 IMAGE_PATH_VALID = os.getenv('IMAGE_PATH_VALID')
 ANNOTATION_PATH = os.getenv('ANNOTATION_PATH')
 SAVE_PATH = os.getenv('SAVE_PATH')
-
-
 
 
 def mapping_img_cls(IMAGE_PATH_VALID):
