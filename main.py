@@ -32,6 +32,8 @@ transform = transforms.Compose([
 
 def main():
     
+    num_epochs = 90  # Number of epochs
+
     # Creating of mapping dataframe to get the images and classes
     data_frame = mapping_img_cls(IMAGE_PATH_VALID)
     
