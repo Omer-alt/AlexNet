@@ -22,9 +22,7 @@ image_class_names = os.listdir(IMAGE_PATH_TRAIN)
 if '.DS_Store' in image_class_names:
     image_class_names.remove('.DS_Store')
 
-
-
-def train(model, criterion, train_loader, num_epochs, initial_lr=0.01, adjust_lr_factor=10):
+def train(model, criterion, train_loader, num_epochs, val_loader, weights_file_name=None, initial_lr=0.01, adjust_lr_factor=10):
     """Training loop for a model with manual learning rate adjustment."""
     
     optimizer = optim.SGD(model.parameters(), lr=initial_lr, momentum=0.9, weight_decay=0.0005)
@@ -32,15 +30,27 @@ def train(model, criterion, train_loader, num_epochs, initial_lr=0.01, adjust_lr
     lr = initial_lr
     total_step = len(train_loader)
     
+    # Load optimizer state if a weights file is provided
+    if weights_file_name is not None:    
+        checkpoint = torch.load(os.path.join(SAVE_PATH, weights_file_name), map_location=device)
+        model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        last_epoch = checkpoint['epoch']
+        best_val_loss = checkpoint['best_val_loss']
+        
+        for param_group in optimizer.param_groups:
+                lr = param_group['lr']
+                
+    else:
+        last_epoch = 0
+    
     for epoch in range(num_epochs):
         model.train()  # Set model to training mode
         running_loss = 0.0
         correct_train = 0
         total_train = 0
         
-        
         for batch_idx, (images, labels) in enumerate(train_loader):
-            
             images, labels = images.to(device), labels.to(device)
             
             optimizer.zero_grad()  # Zero the parameter gradients
@@ -56,34 +66,33 @@ def train(model, criterion, train_loader, num_epochs, initial_lr=0.01, adjust_lr
             correct_train += (predicted == labels).sum().item()
             
             if batch_idx % 20000 == 0:
-                print(batch_idx)
+                print(batch_idx, end='\t')
         
         avg_train_loss = running_loss / total_step
-        train_acc = correct_train /  total_train * 100
+        train_acc = correct_train / total_train * 100
         
-        val_loss, val_acc,top1_acc, top5_acc  = validate(model, criterion, val_loader)
+        val_loss, val_acc, top1_err, top5_err = validate(model, criterion, val_loader)
         
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-        else:
-            lr /= adjust_lr_factor
-            for param_group in optimizer.param_groups:
+        # we adjusted manually the learning rate
+#         if val_loss < best_val_loss:
+#             best_val_loss = val_loss
+#         else:
+#             lr /= adjust_lr_factor
+
+        for param_group in optimizer.param_groups:
                 param_group['lr'] = lr
 
-
-        print('Epoch [{}/{}], Train Loss: {:.4f}, Train Acc: {:.4f}, Val Loss: {:.4f}, Val Acc: {:.4f}, Top-1 Acc: {:.4f}, Top-5 Acc: {:.4f}'
-              .format(epoch+1, num_epochs, avg_train_loss, train_acc, val_loss, val_acc, top1_acc, top5_acc))
-    
-        # Save the model after each epoch
-        save_path = os.path.join(SAVE_PATH, f"alexnet_epoch_{epoch + 1}.pt")
-        torch.save({
-            'epoch': epoch,
-            'model_state_dict': model.state_dict(),
-            'optimizer_state_dict': optimizer.state_dict(),
-            'loss': loss,
-        }, 'checkpoint.pth')
-
-        print(f"Model saved at: {save_path}")
-
-
-
+        print('Epoch [{}/{}], Train Loss: {:.4f}, Train Acc: {:.4f}, Val Loss: {:.4f}, Val Acc: {:.4f}, Top-1 Err: {:.4f}, Top-5 Err: {:.4f}'
+              .format(last_epoch + epoch + 1, num_epochs, avg_train_loss, train_acc, val_loss, val_acc, top1_err, top5_err))
+        
+        # Save model after at least two epochs
+        if epoch >= 2:
+            save_path = os.path.join(SAVE_PATH, f"alexnet_epoch_{last_epoch + epoch + 1}.pt")
+            torch.save({
+                        'epoch': last_epoch + epoch + 1,
+                        'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'best_val_loss': best_val_loss,
+                    }, save_path)
+            
+            print(f"Model saved at: {save_path}")

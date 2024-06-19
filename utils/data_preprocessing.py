@@ -12,11 +12,15 @@ import matplotlib.pyplot as plt
 from glob import glob
 from shutil import move
 import xml.etree.ElementTree as ET
+from dotenv import load_dotenv
 
 import os
 import random
 
-from dotenv import load_dotenv
+from AlexNet.model.AlexNet import AlexNet
+
+# Device configuration
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Load environment variables from .env file
 load_dotenv()
@@ -60,6 +64,76 @@ def class_mapping(mapping_path):
     for idx, line in enumerate(open(mapping_path)):
         class_mapping_dict[line[:9].strip()] = (line[9:].strip(), idx)
     return class_mapping_dict
+
+
+# Recover the model parameters saved in the files during training. Deuxieme
+def load_model_with_weights(weight_path, num_classes=1000):
+    model = AlexNet(num_classes=num_classes)
+    #Load optimizer state 
+    checkpoint = torch.load(weight_path, map_location=device)
+    model.load_state_dict(checkpoint['model_state_dict'])
+    model.to(device)
+     
+    return model
+
+
+# Function to visualize filters
+def visualize_filters(layer_weights, num_filters=96):
+    n_filters = min(layer_weights.size(0), num_filters)  # Show up to num_filters filters
+    
+    num_rows = 6
+    num_cols = (n_filters + num_rows - 1) // num_rows  # Compute the number of rows needed
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 2.5, num_rows * 2.5))
+
+    for i in range(n_filters):
+        row = i // num_cols
+        col = i % num_cols
+        
+        filter = layer_weights[i].detach().cpu().numpy()
+        filter = (filter - filter.min()) / (filter.max() - filter.min())  # Normalize filter to [0, 1]
+
+        if filter.shape[0] == 3:  # If filter has 3 channels (e.g., RGB)
+            filter = np.transpose(filter, (1, 2, 0))  # Transpose to (H, W, C)
+            axs[row, col].imshow(filter)
+        else:  # If filter has a single channel
+            axs[row, col].imshow(filter[0], cmap='gray')
+        
+        axs[row, col].axis('off')
+
+    plt.show()
+    
+# Function to visualize filters
+def visualize_filters(layer_weights,number_chanels, num_filters=96 ):
+    n_filters = min(layer_weights.size(0), num_filters)  # Show up to num_filters filters
+    
+    num_rows = 6
+    num_cols = (n_filters + num_rows - 1) // num_rows  # Compute the number of rows needed
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(num_cols * 2.5, num_rows * 2.5))
+
+    for i in range(n_filters):
+        row = i // num_cols
+        col = i % num_cols
+        
+        filter = layer_weights[i].detach().cpu().numpy()
+        filter = (filter - filter.min()) / (filter.max() - filter.min())  # Normalize filter to [0, 1]
+
+        if number_chanels == 3:  # If filter has 3 channels (e.g., RGB)
+            filter = np.transpose(filter, (1, 2, 0))  # Transpose to (H, W, C)
+            axs[row, col].imshow(filter)
+        else:  # If filter has a single channel
+            axs[row, col].imshow(filter[0], cmap='gray')
+        
+        axs[row, col].axis('off')
+
+    plt.show()
+    
+# Iterate through layers and visualize filters 
+def filters_learned(model, number_chanels=1):
+    for name, param in model.named_parameters():
+        if 'weight' in name and 'layer' in name:
+            print(f"Visualizing filters for layer: {name}")
+            visualize_filters(param, number_chanels)
+            break  # Visualize only the first convolutional layer for brevity
 
 
 

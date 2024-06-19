@@ -13,7 +13,7 @@ class ImageNetDataset(Dataset):
         self.class_mapping_dict = class_mapping_dict
         self.df = df
         
-        #  To run just part of dataset
+        #  To run just part of training dataset.
         self.limit = limit
         
         self.images = []
