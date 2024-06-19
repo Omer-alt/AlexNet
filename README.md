@@ -15,7 +15,7 @@ The training dataset is well structured so we created a class mapping dictionary
 ### 2. Data Augmentation
 We applied several transformations to enhance the dataset, including resizing images to 224x224 pixels, applying random horizontal and vertical flips, and introducing color jittering for brightness, contrast and Normalization was also performed to standardize pixel values.
 
-![Data Augmented](./assets/data_augmented.png)
+![Data Augmented](./assets/data_augmented1..png)
 Samples of images before and after augmentation
 
 
@@ -29,16 +29,18 @@ up convergence
 - Learning Rate Scheduler
 
 
+
+
 #### visualize filters learn by the first convolutional layer
-<div style="display: flex; flex-direction: column; align-items: center;">
-    <div style="display: flex; justify-content: center;">
-        <img src="./assets/chanel1.png" alt="Single Chanel" width="400" />
-        <img style="marginLeft: 10px" src="./assets/chanel123.png" alt="RGB Chanel" width="400" />
-    </div>
-    <div style="text-align: center;">
-        <b>Figure:</b> 96 convolutional kernels of size 11×11×1 and 11×11×3  learned by the first convolutional layer on the 224×224×3 input images.
-    </div>
-</div>
+![Data Augmented](./assets/Feature%20learned.png)
+96 convolutional kernels of size 11×11×1 and 11×11×3  learned by the first convolutional layer on the 224×224×3 input images.
+
+
+
+#### Validation images and the five labels considered most probable by our model
+
+
+the probability assigned to the correct label is shown with a green bar
 
 
 ### 4. Experimentation results
@@ -47,7 +49,7 @@ up convergence
 |-------------------------|-----------------|-----------------|-----------|------------|--------|
 | AlexNet (Original)      |    40.7         | 18.2            |   2       |  6 Days    | 90     |
 | AlexNet (Implementation)|    55.8         | 29.9            |   1       |58.6 Hours  | 22     |
-
+| Ensemble Method (2 CNNs)|    54.4         | 29.3            |   1       |     -      |    -   |
 
 **Result:** 
 <!-- ![Run_Over_Epochs_7](./assets/Epochs.png)
