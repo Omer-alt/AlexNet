@@ -3,10 +3,10 @@
 ![AlexNet](./assets/AlexNetarchitecture.png)
 Network architecture of AlexNet.
 
-In this experiment, we aimed to implement and evaluate the AlexNet architecture on the ImageNet dataset, focusing on various aspects such as data preprocessing, augmentation, and model performance.
+In this experiment, we aimed to implement and evaluate the AlexNet architecture on the ImageNet dataset, focusing on various aspects such as data preprocessing, augmentation, and model performance, and presenting the results obtained in comparison to those reported in the paper 'ImageNet Classification with Deep Convolutional Neural Networks.'
 
 ### 1. Data Loading
-The data set we have is adequate for the object localization problem, but the aim of our experiment is classification.ss
+The data set we have is adequate for the object localization problem, but the aim of our experiment is classification.
  ImageNet 2012 is available on kaggle and can be used directly: [ImageNet Object Localization Challenge 2012 on Kaggle](https://www.kaggle.com/competitions/imagenet-object-localization-challenge/data)
 
 ### 2. Data Preprocessing
@@ -15,16 +15,38 @@ The training dataset is well structured so we created a class mapping dictionary
 ### 2. Data Augmentation
 We applied several transformations to enhance the dataset, including resizing images to 224x224 pixels, applying random horizontal and vertical flips, and introducing color jittering for brightness, contrast and Normalization was also performed to standardize pixel values.
 
+![Data Augmented](./assets/data_augmented.png)
+Samples of images before and after augmentation
+
+
 ### 3. Training and Parameter hyperparameters configuration
 
+We began by fine-tuning key hyperparameters critical to the training process:
+- Batch Size: We used a batch size of 32.
+- Optimization Algorithm: We employed SGD with momentum and weight decay to speed123
+up convergence
+- Regularization
+- Learning Rate Scheduler
 
-### 3. Experimentation results
 
-| Model   | Top 1 Error (%) | Top 5 Error (%) | Time     | GPU | Epochs |
-|---------|-----------------|-----------------|----------|-----|--------|
-| CNN     | 37.5            | 17.0            | 6 Days   | 2   | 90     |
-| AlexNet | 60.13           | 48.14           | 12 Hours | 1   | 7      |
+#### visualize filters learn by the first convolutional layer
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <div style="display: flex; justify-content: center;">
+        <img src="./assets/chanel1.png" alt="Single Chanel" width="400" />
+        <img style="marginLeft: 10px" src="./assets/chanel123.png" alt="RGB Chanel" width="400" />
+    </div>
+    <div style="text-align: center;">
+        <b>Figure:</b> 96 convolutional kernels of size 11×11×1 and 11×11×3  learned by the first convolutional layer on the 224×224×3 input images.
+    </div>
+</div>
 
+
+### 4. Experimentation results
+
+| Model                   | Top 1 Error (%) | Top 5 Error (%) |    GPU    | Time       | Epochs |
+|-------------------------|-----------------|-----------------|-----------|------------|--------|
+| AlexNet (Original)      |    40.7         | 18.2            |   2       |  6 Days    | 90     |
+| AlexNet (Implementation)|    55.8         | 29.9            |   1       |58.6 Hours  | 22     |
 
 
 **Result:** 

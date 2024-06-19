@@ -49,13 +49,17 @@ def validate(model, criterion, val_loader):
             correct_val += (predicted == labels).sum().item()
 
             # Compute top-1 and top-5 error rates
-            top1_error_rate, top5_error_rate = top_k_error_rate(outputs, labels, k=5)[:2]
+            error_rates = top_k_error_rate(outputs, labels, k=5)
+            top1_error_rate = error_rates[0]  # First element is the top-1 error rate
+            top5_error_rate = error_rates[-1] # Last element is the top-5 error rate (k=5)
+
             cumulative_top1_error_rate += top1_error_rate
             cumulative_top5_error_rate += top5_error_rate
     
     avg_val_loss = val_loss / len(val_loader)
     avg_top1_error_rate = cumulative_top1_error_rate / len(val_loader)
     avg_top5_error_rate = cumulative_top5_error_rate / len(val_loader)
+    
     val_acc = correct_val / total_val * 100
 
     print(f"Validation Loss: {avg_val_loss:.4f}, Val Acc: {val_acc:.4f}, Top-1 Error Rate: {avg_top1_error_rate:.2f}%, Top-5 Error Rate: {avg_top5_error_rate:.2f}%")
