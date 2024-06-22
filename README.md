@@ -51,12 +51,19 @@ the probability assigned to the correct label is shown with a green bar
 | AlexNet (Implementation)|    55.8         | 29.9            |   1       |58.6 Hours  | 22     |
 | Ensemble Method (2 CNNs)|    54.4         | 29.3            |   1       |     -      |    -   |
 
-**Result:** 
-<!-- ![Run_Over_Epochs_7](./assets/Epochs.png)
-Network architecture of AlexNet. -->
-The result on the complete dataset ILSVRC- 2012 run on Kaggle during 12 hours of time
+
+Display  five labels considered most probable by our model
 
 
+![Top_5](./assets/top5.png)
+
+Thirty two ILSVRC-2012 test images and the five labels considered most probable by our model. The probability assigned to the correct label is shown with a orange bar (if it happens to be in the top 5).
+
+### Project Structure 
+- `utils`: This utility module includes functions in `data_preprocessing.py`, a training function in `train.py`, and an evaluation function in `evaluate.py`.
+- `model`: This directory contains the `model.py` file, which defines the AlexNet architecture.
+- `datasets`: This directory contains the `ImageNetDataset.py` file, which defines the ImageNetDataset class, which is a custom PyTorch dataset for loading and processing ImageNet images and their corresponding labels with optional transformations.
+- `main.py`:This file sets up data transformations, loads datasets and model, and trains an AlexNet model on ImageNet data with specified configurations.
 
 ### Build With
 
@@ -76,6 +83,13 @@ Go to the project directory and run it.
     cd AlexNet
     python3 main.py
 ```
+
+### Authors
+
+- [@Fotso Omer](https://portfolio-omer-alt.vercel.app/)
+- [@Duaa Alshareif](https://github.com/DuaaAlshareef)
+- [@Aime Ouraga](https://github.com/aimeouraga)
+
 ### License
 
 [MIT](https://choosealicense.com/licenses/mit/)
